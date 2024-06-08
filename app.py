@@ -64,7 +64,7 @@ def fetch_weather_data(city):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if event.message.text.lower() == "天气":
+    if event.message.text.lower() == "天氣":
         weather_info = fetch_weather_data("淡水")
         reply = f"淡水區的天氣是：\n{weather_info}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
