@@ -3,10 +3,11 @@ services:
     name: my-flask-app
     env: python
     plan: free
-    buildCommand: ""
-    startCommand: gunicorn app:app
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
     envVars:
       - key: LINE_CHANNEL_ACCESS_TOKEN
         value: 'YOUR_LINE_CHANNEL_ACCESS_TOKEN'
       - key: LINE_CHANNEL_SECRET
         value: 'YOUR_LINE_CHANNEL_SECRET'
+    pythonVersion: '3.8'  # 或其他適合的 Python 版本
