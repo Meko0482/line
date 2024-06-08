@@ -8,14 +8,14 @@ import os
 
 app = Flask(__name__)
 
-# 从环境变量中读取 LINE Bot 的 Channel Access Token 和 Channel Secret
-LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN')
-LINE_CHANNEL_SECRET = os.getenv('LINE_CHANNEL_SECRET')
+# 直接在代码中硬编码 LINE Bot 的 Channel Access Token 和 Channel Secret
+LINE_CHANNEL_ACCESS_TOKEN = 'EVJjdnTQ+p02Btrm/1iTYnFlKcuwbmcSDJSHb2HA/i7DiWMX0zLSito0mejJUmLjafYFdAKduaffBVAq0NIvKsMGLWwggUDdY1tnebNiPf5R9vW9Ns+QJitUTdeVNnNKQCr1VKRDhAJGFZrk3G7nhgdB04t89/1O/w1cDnyilFU='
+LINE_CHANNEL_SECRET = 'e9e71edac68e482a57c9d84c6a1862f3'
 
-# 检查环境变量是否正确读取
-if LINE_CHANNEL_ACCESS_TOKEN is None or LINE_CHANNEL_SECRET is None:
-    logging.error("Environment variables LINE_CHANNEL_ACCESS_TOKEN and LINE_CHANNEL_SECRET must be set.")
-    raise ValueError("Environment variables LINE_CHANNEL_ACCESS_TOKEN and LINE_CHANNEL_SECRET must be set.")
+# 检查是否正确设置了 Channel Access Token 和 Channel Secret
+if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_CHANNEL_SECRET:
+    logging.error("LINE_CHANNEL_ACCESS_TOKEN 和 LINE_CHANNEL_SECRET 必须被设置.")
+    raise ValueError("LINE_CHANNEL_ACCESS_TOKEN 和 LINE_CHANNEL_SECRET 必须被设置.")
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
