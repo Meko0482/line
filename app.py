@@ -36,32 +36,44 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     if event.message.text.lower() == "天氣":
-        weather_info = get_weather_info()
+        weather_info = fetch_weather_data()
         reply = f"您所在位置的天氣是：\n{weather_info}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
-def get_weather_info():
-    url = f"https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-7A752AE1-2953-4680-A2BA-6B1B13AAB708&format=JSON&locationName=新北市淡水區"
+def fetch_weather_data(city):
+    # 氣象局 API 的 URL
+    url = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWA-7A752AE1-2953-4680-A2BA-6B1B13AAB708&format=JSON&StationId=466900"
 
     try:
+        # 發送 GET 請求
         response = requests.get(url)
+
+        # 檢查請求是否成功
         if response.status_code == 200:
+            # 解析 JSON 回應
             data = response.json()
-            if "records" in data and "location" in data["records"]:
-                location = data["records"]["location"][0]
-                station_name = location["locationName"]
-                weather_elements = {elem['elementName']: elem['elementValue'] for elem in location['weatherElement']}
-                weather = weather_elements.get("Weather", "N/A")
-                temperature = weather_elements.get("TEMP", "N/A")
-                humidity = weather_elements.get("HUMD", "N/A")
-                rain = weather_elements.get("24R", "N/A")
-                return f"城市: {station_name}\n天氣: {weather}\n温度: {temperature}°C\n湿度: {humidity}%\n降雨量: {rain} mm"
+
+            # 提取並打印天氣資料
+            if "records" in data and "Station" in data["records"]:
+                station = data["records"]["Station"][0]  # 只取第一個城市的資料
+                station_name = station["StationName"]
+                weather_element = station["WeatherElement"]
+                weather = weather_element.get("Weather", "N/A")
+                temperature = weather_element.get("AirTemperature", "N/A")
+                humidity = weather_element.get("RelativeHumidity", "N/A")
+                print(f"城市: {station_name}, 天氣: {weather}, 溫度: {temperature}, 濕度: {humidity}")
             else:
-                return "無法獲取天氣信息。"
+                print("No weather data found.")
         else:
-            return "無法獲取天氣信息。"
+            print("Failed to fetch data. Status code:", response.status_code)
     except Exception as e:
-        return f"發生錯誤: {e}"
+        print("An error occurred:", e)
+
+# 指定城市名稱
+city = "淡水"  # 這裡以淡水為例，請根據實際需求更改城市名稱
+
+# 呼叫函式抓取天氣資料並打印
+fetch_weather_data(city)
 
 if __name__ == "__main__":
     app.run()
