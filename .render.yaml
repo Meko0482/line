@@ -5,9 +5,4 @@ services:
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
-    pythonVersion: '3'  # 或其他适合的 Python 版本
-    envVars:
-      - key: LINE_CHANNEL_ACCESS_TOKEN
-        value: 'EVJjdnTQ+p02Btrm/1iTYnFlKcuwbmcSDJSHb2HA/i7DiWMX0zLSito0mejJUmLjafYFdAKduaffBVAq0NIvKsMGLWwggUDdY1tnebNiPf5R9vW9Ns+QJitUTdeVNnNKQCr1VKRDhAJGFZrk3G7nhgdB04t89/1O/w1cDnyilFU='
-      - key: LINE_CHANNEL_SECRET
-        value: 'e9e71edac68e482a57c9d84c6a1862f3
+    pythonVersion: '3.8'  # 或其他适合的 Python 版本
