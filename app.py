@@ -35,9 +35,9 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if event.message.text.lower() == "天气":
+    if event.message.text.lower() == "天氣":
         weather_info = get_weather_info()
-        reply = f"您所在位置的天气是：\n{weather_info}"
+        reply = f"您所在位置的天氣是：\n{weather_info}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
 def get_weather_info():
@@ -55,13 +55,13 @@ def get_weather_info():
                 temperature = weather_elements.get("TEMP", "N/A")
                 humidity = weather_elements.get("HUMD", "N/A")
                 rain = weather_elements.get("24R", "N/A")
-                return f"城市: {station_name}\n天气: {weather}\n温度: {temperature}°C\n湿度: {humidity}%\n降雨量: {rain} mm"
+                return f"城市: {station_name}\n天氣: {weather}\n温度: {temperature}°C\n湿度: {humidity}%\n降雨量: {rain} mm"
             else:
-                return "无法获取天气信息。"
+                return "無法獲取天氣信息。"
         else:
-            return "无法获取天气信息。"
+            return "無法獲取天氣信息。"
     except Exception as e:
-        return f"发生错误: {e}"
+        return f"發生錯誤: {e}"
 
 if __name__ == "__main__":
     app.run()
