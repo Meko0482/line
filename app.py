@@ -33,13 +33,6 @@ def callback():
 
     return 'OK'
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_text_message(event):
-    if event.message.text.lower() == "天氣":
-        weather_info = fetch_weather_data("淡水")
-        reply = f"淡水区的天气是：\n{weather_info}"
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
-
 def fetch_weather_data(city):
     # 氣象局 API 的 URL
     url = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWA-7A752AE1-2953-4680-A2BA-6B1B13AAB708&format=JSON&StationId=466900"
@@ -55,21 +48,26 @@ def fetch_weather_data(city):
 
             # 提取並返回天氣資料
             if "records" in data and "Station" in data["records"]:
-                station = next((s for s in data["records"]["Station"] if s["Parameter"]["parameterValue"] == city), None)
-                if station:
-                    weather_element = station["Parameter"]
-                    weather = weather_element.get("parameterName", "N/A")
-                    temperature = weather_element.get("parameterValue", "N/A")
-                    humidity = weather_element.get("parameterName", "N/A")
-                    return f"天氣: {weather}, 温度: {temperature}°C, 湿度: {humidity}%"
-                else:
-                    return f"找不到{city}區的天氣资料"
+                station = data["records"]["Station"][0]  # 只取第一個城市的資料
+                station_name = station["StationName"]
+                weather_element = station["WeatherElement"]
+                weather = weather_element.get("Weather", "N/A")
+                temperature = weather_element.get("AirTemperature", "N/A")
+                humidity = weather_element.get("RelativeHumidity", "N/A")
+                return f"城市: {station_name}, 天氣: {weather}, 溫度: {temperature}, 濕度: {humidity}"
             else:
-                return "無法獲取天氣信息。"
+                return "無法取得天氣資訊。"
         else:
-            return "無法獲取天气信息。"
+            return "無法取得天氣資訊。"
     except Exception as e:
-        return f"發生錯誤": {e}"
+        return f"發生錯誤: {e}"
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_text_message(event):
+    if event.message.text.lower() == "天气":
+        weather_info = fetch_weather_data("淡水")
+        reply = f"淡水區的天氣是：\n{weather_info}"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
 if __name__ == "__main__":
     app.run()
