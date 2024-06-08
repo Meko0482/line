@@ -36,8 +36,8 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     if event.message.text.lower() == "天氣":
-        weather_info = fetch_weather_data()
-        reply = f"您所在位置的天氣是：\n{fetch_weather_data}"
+        weather_info = fetch_weather_data("淡水")
+        reply = f"淡水区的天气是：\n{weather_info}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
 def fetch_weather_data(city):
@@ -53,27 +53,23 @@ def fetch_weather_data(city):
             # 解析 JSON 回應
             data = response.json()
 
-            # 提取並打印天氣資料
+            # 提取並返回天氣資料
             if "records" in data and "Station" in data["records"]:
-                station = data["records"]["Station"][0]  # 只取第一個城市的資料
-                station_name = station["StationName"]
-                weather_element = station["WeatherElement"]
-                weather = weather_element.get("Weather", "N/A")
-                temperature = weather_element.get("AirTemperature", "N/A")
-                humidity = weather_element.get("RelativeHumidity", "N/A")
-                print(f"城市: {station_name}, 天氣: {weather}, 溫度: {temperature}, 濕度: {humidity}")
+                station = next((s for s in data["records"]["Station"] if s["Parameter"]["parameterValue"] == city), None)
+                if station:
+                    weather_element = station["Parameter"]
+                    weather = weather_element.get("parameterName", "N/A")
+                    temperature = weather_element.get("parameterValue", "N/A")
+                    humidity = weather_element.get("parameterName", "N/A")
+                    return f"天氣: {weather}, 温度: {temperature}°C, 湿度: {humidity}%"
+                else:
+                    return f"找不到{city}區的天氣资料"
             else:
-                print("No weather data found.")
+                return "無法獲取天氣信息。"
         else:
-            print("Failed to fetch data. Status code:", response.status_code)
+            return "無法獲取天气信息。"
     except Exception as e:
-        print("An error occurred:", e)
-
-# 指定城市名稱
-city = "淡水"  # 這裡以淡水為例，請根據實際需求更改城市名稱
-
-# 呼叫函式抓取天氣資料並打印
-fetch_weather_data(city)
+        return f"發生錯誤": {e}"
 
 if __name__ == "__main__":
     app.run()
