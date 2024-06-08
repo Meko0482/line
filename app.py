@@ -35,20 +35,13 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    if event.message.text.lower() == "天氣":
-        reply = "請分享您的位置，以便我告訴您當地的天氣資訊。"
+    if event.message.text.lower() == "天气":
+        weather_info = get_weather_info()
+        reply = f"您所在位置的天气是：\n{weather_info}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
-@handler.add(MessageEvent, message=LocationMessage)
-def handle_location_message(event):
-    lat = event.message.latitude
-    lon = event.message.longitude
-    weather_info = get_weather_info()
-    reply = f"您所在位置的天氣是：\n{weather_info}"
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
-
 def get_weather_info():
-    url = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWA-7A752AE1-2953-4680-A2BA-6B1B13AAB708&format=JSON&StationId=466900"
+    url = f"https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWB-7A752AE1-2953-4680-A2BA-6B1B13AAB708&format=JSON&locationName=新北市淡水區"
 
     try:
         response = requests.get(url)
@@ -62,13 +55,13 @@ def get_weather_info():
                 temperature = weather_elements.get("TEMP", "N/A")
                 humidity = weather_elements.get("HUMD", "N/A")
                 rain = weather_elements.get("24R", "N/A")
-                return f"城市: {station_name}\n天氣: {weather}\n溫度: {temperature}°C\n濕度: {humidity}%\n降雨量: {rain} mm"
+                return f"城市: {station_name}\n天气: {weather}\n温度: {temperature}°C\n湿度: {humidity}%\n降雨量: {rain} mm"
             else:
-                return "無法取得天氣資訊。"
+                return "无法获取天气信息。"
         else:
-            return "無法取得天氣資訊。"
+            return "无法获取天气信息。"
     except Exception as e:
-        return f"發生錯誤: {e}"
+        return f"发生错误: {e}"
 
 if __name__ == "__main__":
     app.run()
