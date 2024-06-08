@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: my-flask-app
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: gunicorn app:app
+    envVars:
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        value: 'YOUR_LINE_CHANNEL_ACCESS_TOKEN'
+      - key: LINE_CHANNEL_SECRET
+        value: 'YOUR_LINE_CHANNEL_SECRET'
