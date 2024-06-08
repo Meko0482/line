@@ -99,7 +99,7 @@ def callback():
 def handle_message(event):
     user_message = event.message.text
     user_id = event.source.user_id  # 获取用户ID
-    if user_message == '1':
+    if user_message == "A":
         reply_message = "請輸入日期（YYYY-MM-DD）："
     elif user_message.startswith('日期：'):
         date = user_message.split('：')[1]
@@ -115,7 +115,7 @@ def handle_message(event):
                 reply_message += "{}\n".format(event[1])
         if not events and not calendar_events:
             reply_message = "日期 {} 沒有任何事件。".format(date)
-    elif user_message == '2':
+    elif user_message == "B":
         reply_message = "請輸入事件標題："
     elif user_message.startswith('標題：'):
         title = user_message.split('：')[1]
@@ -124,7 +124,7 @@ def handle_message(event):
         location = input("請輸入地點：")
         add_event(user_id, title, date, time, location)
         reply_message = "事件已新增。"
-    elif user_message == '3':
+    elif user_message == "C":
         reply_message = "請輸入要刪除的事件 ID："
     elif user_message.startswith('ID：'):
         event_id = user_message.split('：')[1]
