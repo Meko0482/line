@@ -37,7 +37,7 @@ def callback():
 def handle_text_message(event):
     if event.message.text.lower() == "天氣":
         weather_info = fetch_weather_data()
-        reply = f"您所在位置的天氣是：\n{weather_info}"
+        reply = f"您所在位置的天氣是：\n{fetch_weather_data}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
 
 def fetch_weather_data(city):
